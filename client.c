@@ -20,6 +20,7 @@ int main(int argc, char *argv[])
 	struct hostent *server;
 
 	char buffer[256];
+	char oldbuffer[256];
 	if (argc < 3) {
 		fprintf(stderr,"usage %s hostname port\n", argv[0]);
 		exit(0);
@@ -45,6 +46,7 @@ int main(int argc, char *argv[])
 		printf("Please enter the message: ");
 		bzero(buffer,256);
 		fgets(buffer,255,stdin);
+		strncpy(oldbuffer, buffer, 256);
 		n = write(sockfd,buffer,strlen(buffer));
 		if (n < 0)
 			error("ERROR writing to socket");
@@ -53,7 +55,7 @@ int main(int argc, char *argv[])
 		if (n < 0)
 			error("ERROR reading from socket");
 		printf("%s\n",buffer);
-	} while(buffer && strcmp("\n", buffer) && strcmp("\r\n", buffer));
+	} while(oldbuffer && strcmp("\n", oldbuffer) && strcmp("\r\n", oldbuffer));
 
 	close(sockfd);
 	return 0;
