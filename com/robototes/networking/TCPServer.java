@@ -12,15 +12,17 @@ class TCPServer {
 		String capitalizedSentence;
 		ServerSocket welcomeSocket = new ServerSocket(2412);
 
-		while (true) {
-			Socket connectionSocket = welcomeSocket.accept();
-			BufferedReader inFromClient =
-			 new BufferedReader(new InputStreamReader(connectionSocket.getInputStream()));
-			DataOutputStream outToClient = new DataOutputStream(connectionSocket.getOutputStream());
+		Socket connectionSocket = welcomeSocket.accept();
+		BufferedReader inFromClient =
+		 new BufferedReader(new InputStreamReader(connectionSocket.getInputStream()));
+		DataOutputStream outToClient = new DataOutputStream(connectionSocket.getOutputStream());
+		do {
 			clientSentence = inFromClient.readLine();
 			System.out.println("Received: " + clientSentence);
 			capitalizedSentence = clientSentence.toUpperCase() + '\n';
 			outToClient.writeBytes(capitalizedSentence);
-		}
+		} while(!clientSentence.equals(""));
+		System.out.println("No data received! Quitting...");
+		welcomeSocket.close();
 	}
 }
