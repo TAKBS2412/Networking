@@ -52,8 +52,8 @@ int main(int argc, char *argv[])
 		n = write(newsockfd,"I got your message",18);
 		printf("Message received: %s\n", buffer);
 		if (n < 0) error("ERROR writing to socket");
-	} while(1);
-	// } while(buffer && strcmp("\n", buffer) && strcmp("\r\n", buffer));
+	//} while(1);
+	} while(buffer && strcmp("\n", buffer) && strcmp("\r\n", buffer));
 
 	close(newsockfd);
 	close(sockfd);
