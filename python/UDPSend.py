@@ -6,7 +6,6 @@ MESSAGE = "Hello, world!"
 
 print("UDP target IP: " + UDP_IP)
 print("UDP target port: " + str(UDP_PORT))
-print("Message: " + MESSAGE)
 
 sock = socket.socket(socket.AF_INET, # Internet
     socket.SOCK_DGRAM) # UDP
