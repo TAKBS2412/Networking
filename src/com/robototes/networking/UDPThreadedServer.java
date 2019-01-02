@@ -52,6 +52,11 @@ public class UDPThreadedServer implements Runnable {
 		socket.close();
 	}
 	
+	// Stops the thread.
+	public void stop() {
+		shouldRun = false; 
+	}
+	
 	// Reads data from the network (via UDP) and returns it as a String.
 	public synchronized String readData() {
 		return receivedDataQueue.poll(); // Retrieves and removes from the queue, might return null, must check (from docs).
@@ -70,5 +75,6 @@ public class UDPThreadedServer implements Runnable {
 			System.out.println(threadServer.readData());
 		} while(input.equals("y"));
 		scan.close();
+		threadServer.stop();
 	}
 }
