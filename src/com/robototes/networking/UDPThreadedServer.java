@@ -6,11 +6,11 @@ import java.net.SocketException;
 
 public class UDPThreadedServer implements Runnable {
 	private boolean shouldRun = true;
-	private static final int PORT = 2412;
+	private int PORT = 2412;
 	
-	DatagramSocket socket;
-	DatagramPacket packet;
-	byte[] receiveData = new byte[1024];
+	private DatagramSocket socket;
+	private DatagramPacket packet;
+	private byte[] receiveData = new byte[1024];
 	
 	public UDPThreadedServer() { //TODO add a parameter for update time/frequency.
 		try {
