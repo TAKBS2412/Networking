@@ -3,7 +3,6 @@ package com.robototes.networking;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.SocketException;
-import java.util.concurrent.ArrayBlockingQueue;
 
 public class UDPThreadedServer implements Runnable {
 	private boolean shouldRun = true;
@@ -11,12 +10,11 @@ public class UDPThreadedServer implements Runnable {
 	
 	private DatagramSocket socket;
 	private DatagramPacket packet;
+	
 	private byte[] receiveData = new byte[1024];
-	
-	private final int QUEUECAPACITY = 20;
-	private ArrayBlockingQueue<String> receivedDataQueue = new ArrayBlockingQueue<String>(QUEUECAPACITY);
-	
+	private String receiveString = "";
 	private static final int UDP_RECEIVE_RATE_MS = 1000;
+	
 	
 	public UDPThreadedServer() { //TODO add a parameter for update time/frequency.
 		try {
@@ -35,13 +33,7 @@ public class UDPThreadedServer implements Runnable {
 				socket.receive(packet);
 				
 				receiveData = packet.getData();
-				String receiveString = (new String(receiveData)).trim();
-//				System.out.println(receiveString);
-				if(receivedDataQueue.remainingCapacity() > 0) {
-					receivedDataQueue.add(receiveString);
-				} else {
-//					System.out.println("Not enough space!");
-				}
+				receiveString = (new String(receiveData)).trim();
 				if(receiveString.equals("")) {
 					System.out.println("No data received! Quitting...");
 					break;
@@ -60,7 +52,7 @@ public class UDPThreadedServer implements Runnable {
 	
 	// Reads data from the network (via UDP) and returns it as a String.
 	public synchronized String readData() {
-		return receivedDataQueue.poll(); // Retrieves and removes from the queue, might return null, must check (from docs).
+		return receiveString;
 	}
 
 	public static void main(String... args) {
@@ -70,7 +62,7 @@ public class UDPThreadedServer implements Runnable {
 		System.out.println(newThread.getName());
 		for(int i = 0; i < 100; i++) {
 			long startTime = System.currentTimeMillis();
-			System.out.println(threadServer.readData());
+			System.out.println("Received message: " + threadServer.readData());
 			long elapsedTimeMS = System.currentTimeMillis() - startTime;
 			if(elapsedTimeMS < UDP_RECEIVE_RATE_MS) {
 				try {
