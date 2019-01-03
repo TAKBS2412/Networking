@@ -3,7 +3,6 @@ package com.robototes.networking;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.SocketException;
-import java.util.Scanner;
 import java.util.concurrent.ArrayBlockingQueue;
 
 public class UDPThreadedServer implements Runnable {
@@ -16,6 +15,8 @@ public class UDPThreadedServer implements Runnable {
 	
 	private final int QUEUECAPACITY = 20;
 	private ArrayBlockingQueue<String> receivedDataQueue = new ArrayBlockingQueue<String>(QUEUECAPACITY);
+	
+	private static final int UDP_RECEIVE_RATE_MS = 1000;
 	
 	public UDPThreadedServer() { //TODO add a parameter for update time/frequency.
 		try {
@@ -67,14 +68,18 @@ public class UDPThreadedServer implements Runnable {
 		Thread newThread = new Thread(threadServer, "UDP Server Thread");
 		newThread.start();
 		System.out.println(newThread.getName());
-		String input = "";
-		Scanner scan = new Scanner(System.in);
-		do {
-			System.out.print("Keep running? ");
-			input = scan.nextLine();
+		for(int i = 0; i < 100; i++) {
+			long startTime = System.currentTimeMillis();
 			System.out.println(threadServer.readData());
-		} while(input.equals("y"));
-		scan.close();
+			long elapsedTimeMS = System.currentTimeMillis() - startTime;
+			if(elapsedTimeMS < UDP_RECEIVE_RATE_MS) {
+				try {
+					Thread.sleep(UDP_RECEIVE_RATE_MS - elapsedTimeMS);
+				} catch(InterruptedException e) {
+					e.printStackTrace();
+				}
+			}
+		}
 		threadServer.stop();
 	}
 }
